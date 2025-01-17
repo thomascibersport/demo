@@ -1,0 +1,167 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Список врачей</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<style>
+    /* Простая стилизация */
+    .navbar {
+        background-color: #f4f4f4;
+        padding: 10px;
+        display: flex;
+        gap: 15px;
+        border-bottom: 1px solid #ddd;
+    }
+    .navbar a {
+        text-decoration: none;
+        color: #333;
+        font-weight: bold;
+    }
+    .navbar a:hover {
+        text-decoration: underline;
+    }
+    .doctor-card {
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin: 10px;
+            display: inline-block;
+            width: 200px;
+            text-align: center;
+        }
+        .doctor-card img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+        }
+        .pagination {
+    margin-top: 20px;
+    text-align: center;
+}
+.pagination a {
+    margin: 0 5px;
+    text-decoration: none;
+    color: #333;
+    font-weight: bold;
+}
+.pagination a:hover {
+    text-decoration: underline;
+}
+.pagination .current {
+    margin: 0 5px;
+    font-weight: bold;
+    color: #000;
+}
+
+</style>
+<body>
+    <div class="navbar">
+        <a href="{% url 'dashboard' %}">Личный кабинет</a>
+        <a href="{% url 'doctors_list' %}">Список врачей</a>
+        <a href="{% url 'create_appointment' %}">Записаться на прием</a>
+        <a href="{% url 'appointments_list' %}">Мои записи</a>
+        <a href="{% url 'logout' %}">Выйти</a>
+    </div>
+    <h1>Список врачей</h1>
+
+    <input type="text" id="search" placeholder="Поиск врача..." style="margin-bottom: 20px;">
+    <div id="doctor-cards">
+        {% for doctor in page_obj.object_list %}
+        <div class="doctor-card" data-id="{{ doctor.id }}">
+            {% if doctor.avatar %}
+            <img src="{{ doctor.avatar.url }}" alt="{{ doctor.name }}">
+            {% endif %}
+            <h3>{{ doctor.name }}</h3>
+            <p>{{ doctor.specialty }}</p>
+            <p>{{ doctor.working_hours }}</p>
+        </div>
+        {% endfor %}
+    </div>
+    
+    <!-- Навигация по страницам -->
+    <div class="pagination">
+        <span class="step-links">
+            {% if page_obj.has_previous %}
+                <a href="?page=1">&laquo; Первая</a>
+                <a href="?page={{ page_obj.previous_page_number }}">Предыдущая</a>
+            {% endif %}
+    
+            <span class="current">
+                Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}
+            </span>
+    
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}">Следующая</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}">Последняя &raquo;</a>
+            {% endif %}
+        </span>
+    </div>
+    
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const searchInput = document.getElementById('search');
+            const doctorCardsContainer = document.getElementById('doctor-cards');
+    
+            searchInput.addEventListener('input', function () {
+                const query = searchInput.value.trim();
+    
+                // Если поле пустое, отображаем изначальные карточки
+                if (query.length === 0) {
+                    window.location.reload();
+                    return;
+                }
+    
+                // Выполняем поиск при вводе текста
+                fetch(`/search/doctors/?q=${query}`, {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Очищаем текущие карточки
+                    doctorCardsContainer.innerHTML = '';
+    
+                    if (data.length > 0) {
+                        // Создаем новые карточки
+                        data.forEach(doctor => {
+                            const card = document.createElement('div');
+                            card.classList.add('doctor-card');
+                            card.setAttribute('data-id', doctor.id);
+    
+                            if (doctor.avatar) {
+                                const img = document.createElement('img');
+                                img.src = doctor.avatar;
+                                img.alt = doctor.name;
+                                card.appendChild(img);
+                            }
+    
+                            const name = document.createElement('h3');
+                            name.textContent = doctor.name;
+                            card.appendChild(name);
+    
+                            const specialty = document.createElement('p');
+                            specialty.textContent = doctor.specialty;
+                            card.appendChild(specialty);
+    
+                            const workingHours = document.createElement('p');
+                            workingHours.textContent = doctor.working_hours;
+                            card.appendChild(workingHours);
+    
+                            doctorCardsContainer.appendChild(card);
+                        });
+                    } else {
+                        // Если ничего не найдено, выводим сообщение
+                        const message = document.createElement('p');
+                        message.textContent = 'Врачи не найдены.';
+                        doctorCardsContainer.appendChild(message);
+                    }
+                })
+                .catch(error => console.error('Ошибка загрузки данных:', error));
+            });
+        });
+    </script>
+    
+    
+</body>
+</html>

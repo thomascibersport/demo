@@ -1,0 +1,47 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Запись на прием</title>
+</head>
+<style>
+    /* Простая стилизация */
+    .navbar {
+        background-color: #f4f4f4;
+        padding: 10px;
+        display: flex;
+        gap: 15px;
+        border-bottom: 1px solid #ddd;
+    }
+    .navbar a {
+        text-decoration: none;
+        color: #333;
+        font-weight: bold;
+    }
+    .navbar a:hover {
+        text-decoration: underline;
+    }
+</style>
+<body>
+    <div class="navbar">
+        <a href="{% url 'dashboard' %}">Личный кабинет</a>
+        <a href="{% url 'doctors_list' %}">Список врачей</a>
+        <a href="{% url 'create_appointment' %}">Записаться на прием</a>
+        <a href="{% url 'appointments_list' %}">Мои записи</a>
+        <a href="{% url 'logout' %}">Выйти</a>
+    </div>
+    <h1>Запись на прием</h1>
+    <form method="post">
+        {% csrf_token %}
+        <label for="doctor">Выберите врача:</label>
+        <select name="doctor" id="doctor">
+            {% for doctor in doctors %}
+                <option value="{{ doctor.id }}">{{ doctor.name }} — {{ doctor.specialty }}</option>
+            {% endfor %}
+        </select>
+        <label for="date">Выберите дату и время:</label>
+        <input type="datetime-local" name="date" id="date">
+        <button type="submit">Записаться</button>
+    </form>
+</body>
+</html>

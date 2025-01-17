@@ -1,0 +1,23 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Записи к врачу</title>
+</head>
+<body>
+    <h1>Записи к врачу {{ doctor.name }}</h1>
+    <ul>
+        {% for appointment in appointments %}
+            <li>
+                <strong>Пациент:</strong> {{ appointment.user.username }} <br>
+                <strong>Дата:</strong> {{ appointment.date }} <br>
+                <form method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="appointment_id" value="{{ appointment.id }}">
+                    <button type="submit">Удалить</button>
+                </form>
+            </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

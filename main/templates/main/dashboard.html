@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Личный кабинет</title>
+    <style>
+        /* Простая стилизация */
+        .navbar {
+            background-color: #f4f4f4;
+            padding: 10px;
+            display: flex;
+            gap: 15px;
+            border-bottom: 1px solid #ddd;
+        }
+        .navbar a {
+            text-decoration: none;
+            color: #333;
+            font-weight: bold;
+        }
+        .navbar a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <!-- Шапка -->
+    <div class="navbar">
+        <a href="{% url 'dashboard' %}">Личный кабинет</a>
+        <a href="{% url 'doctors_list' %}">Список врачей</a>
+        <a href="{% url 'create_appointment' %}">Записаться на прием</a>
+        <a href="{% url 'appointments_list' %}">Мои записи</a>
+        <a href="{% url 'logout' %}">Выйти</a>
+    </div>
+
+    <!-- Основное содержимое -->
+    <h1>Добро пожаловать, {{ request.user.username }}!</h1>
+    <p>Здесь вы можете управлять своими записями на прием и просматривать доступные услуги.</p>
+</body>
+</html>

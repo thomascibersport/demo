@@ -1,0 +1,22 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Добавить врача</title>
+</head>
+<body>
+    <h1>Добавить врача</h1>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <label for="name">ФИО:</label>
+        <input type="text" name="name" id="name" required>
+        <label for="specialty">Специальность:</label>
+        <input type="text" name="specialty" id="specialty" required>
+        <label for="working_hours">Время работы:</label>
+        <input type="text" name="working_hours" id="working_hours" required>
+        <label for="avatar">Аватар:</label>
+        <input type="file" name="avatar" id="avatar">
+        <button type="submit">Добавить</button>
+    </form>
+</body>
+</html>

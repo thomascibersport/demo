@@ -1,0 +1,55 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Мои записи</title>
+</head>
+<style>
+    /* Простая стилизация */
+    .navbar {
+        background-color: #f4f4f4;
+        padding: 10px;
+        display: flex;
+        gap: 15px;
+        border-bottom: 1px solid #ddd;
+    }
+    .navbar a {
+        text-decoration: none;
+        color: #333;
+        font-weight: bold;
+    }
+    .navbar a:hover {
+        text-decoration: underline;
+    }
+</style>
+<body>
+    <div class="navbar">
+        <a href="{% url 'dashboard' %}">Личный кабинет</a>
+        <a href="{% url 'doctors_list' %}">Список врачей</a>
+        <a href="{% url 'create_appointment' %}">Записаться на прием</a>
+        <a href="{% url 'appointments_list' %}">Мои записи</a>
+        <a href="{% url 'logout' %}">Выйти</a>
+    </div>
+    <h1>Мои записи</h1>
+
+    <h2>Прошедшие записи</h2>
+    <ul>
+        {% for appointment in past_appointments %}
+            <li>
+                <strong>Врач:</strong> {{ appointment.doctor.name }} <br>
+                <strong>Дата:</strong> {{ appointment.date }}
+            </li>
+        {% endfor %}
+    </ul>
+    <h2>Активные записи</h2>
+<ul>
+    {% for appointment in active_appointments %}
+        <li>
+            <strong>Врач:</strong> {{ appointment.doctor.name }} <br>
+            <strong>Дата:</strong> {{ appointment.date }} <br>
+            <a href="{% url 'cancel_appointment' appointment.id %}">Отменить</a>
+        </li>
+    {% endfor %}
+</ul>
+</body>
+</html>
