@@ -7,7 +7,7 @@
         /* Общие стили */
         body {
             font-family: 'Arial', sans-serif;
-            background-color: #f9f9f9;
+            background-color: #f0f8ff; /* Светло-голубой */
             color: #333;
             margin: 0;
             padding: 0;
@@ -15,7 +15,7 @@
 
         /* Навигационная панель */
         .navbar {
-            background-color: #4CAF50;
+            background-color: #007BFF; /* Ярко-синий */
             padding: 15px 20px;
             display: flex;
             justify-content: space-between;
@@ -33,13 +33,13 @@
         }
 
         .navbar a:hover {
-            background-color: #45a049;
+            background-color: #0056b3; /* Темно-синий при наведении */
         }
 
         /* Заголовок */
         h1 {
             text-align: center;
-            color: #4CAF50;
+            color: #007BFF; /* Ярко-синий */
             margin-top: 20px;
         }
 
@@ -57,28 +57,29 @@
             display: block;
             margin-bottom: 8px;
             font-weight: bold;
-            color: #333;
+            color: #0056b3; /* Темно-синий */
         }
 
         select, input[type="datetime-local"] {
-            width: 100%;
+            width: 100%; /* Общая ширина */
             padding: 10px;
             margin-bottom: 20px;
             border: 1px solid #ddd;
             border-radius: 4px;
             font-size: 16px;
             transition: border-color 0.3s ease;
+            box-sizing: border-box; /* Учитываем отступы и рамки */
         }
 
         select:focus, input[type="datetime-local"]:focus {
-            border-color: #4CAF50;
+            border-color: #007BFF; /* Ярко-синий при фокусе */
             outline: none;
         }
 
         button {
             width: 100%;
             padding: 12px;
-            background-color: #4CAF50;
+            background-color: #007BFF; /* Ярко-синий */
             color: white;
             border: none;
             border-radius: 4px;
@@ -89,7 +90,7 @@
         }
 
         button:hover {
-            background-color: #45a049;
+            background-color: #0056b3; /* Темно-синий при наведении */
         }
 
         /* Адаптивность */
@@ -120,6 +121,7 @@
         <a href="{% url 'doctors_list' %}">Список врачей</a>
         <a href="{% url 'create_appointment' %}">Записаться на прием</a>
         <a href="{% url 'appointments_list' %}">Мои записи</a>
+        <a href="{% url 'import_services' %}">Импорт услуг</a> 
         <a href="{% url 'logout' %}">Выйти</a>
     </div>
     <h1>Запись на прием</h1>

@@ -16,7 +16,7 @@
 
     /* Навигационная панель */
     .navbar {
-        background-color: #4CAF50;
+        background-color: #007BFF; /* Синий основной */
         padding: 15px 20px;
         display: flex;
         justify-content: space-between;
@@ -34,21 +34,21 @@
     }
 
     .navbar a:hover {
-        background-color: #45a049;
+        background-color: #0056b3; /* Более тёмный синий */
     }
 
     /* Заголовок */
     h1 {
         text-align: center;
-        color: #4CAF50;
+        color: #007BFF; /* Основной синий */
         margin-top: 20px;
     }
 
     h2 {
-        color: #333;
+        color: #0056b3; /* Более тёмный синий */
         margin-top: 30px;
         padding-bottom: 10px;
-        border-bottom: 2px solid #4CAF50;
+        border-bottom: 2px solid #007BFF;
     }
 
     /* Список записей */
@@ -72,7 +72,7 @@
     }
 
     li strong {
-        color: #4CAF50;
+        color: #007BFF; /* Основной синий */
     }
 
     /* Кнопка отмены */
@@ -80,7 +80,7 @@
         display: inline-block;
         margin-top: 10px;
         padding: 8px 12px;
-        background-color: #ff4d4d;
+        background-color: #FF4D4D; /* Красный для отмены */
         color: white;
         text-decoration: none;
         border-radius: 4px;
@@ -88,7 +88,25 @@
     }
 
     a[href*="cancel"]:hover {
-        background-color: #cc0000;
+        background-color: #CC0000; /* Более тёмный красный */
+    }
+
+    /* Сообщения */
+    .message {
+        padding: 10px;
+        border-radius: 5px;
+        margin-bottom: 15px;
+        font-weight: bold;
+    }
+
+    .message.error {
+        color: white;
+        background-color: #FF4D4D; /* Красный для ошибок */
+    }
+
+    .message.success {
+        color: white;
+        background-color: #007BFF; /* Основной синий для успешных */
     }
 
     /* Адаптивность */
@@ -117,9 +135,19 @@
         <a href="{% url 'doctors_list' %}">Список врачей</a>
         <a href="{% url 'create_appointment' %}">Записаться на прием</a>
         <a href="{% url 'appointments_list' %}">Мои записи</a>
+        <a href="{% url 'import_services' %}">Импорт услуг</a> 
         <a href="{% url 'logout' %}">Выйти</a>
     </div>
     <h1>Мои записи</h1>
+
+    <!-- Вывод сообщений -->
+    {% if messages %}
+        <div>
+            {% for message in messages %}
+                <div class="message {{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+        </div>
+    {% endif %}
 
     <h2>Прошедшие записи</h2>
     <ul>
@@ -130,15 +158,16 @@
             </li>
         {% endfor %}
     </ul>
+
     <h2>Активные записи</h2>
-<ul>
-    {% for appointment in active_appointments %}
-        <li>
-            <strong>Врач:</strong> {{ appointment.doctor.name }} <br>
-            <strong>Дата:</strong> {{ appointment.date }} <br>
-            <a href="{% url 'cancel_appointment' appointment.id %}">Отменить</a>
-        </li>
-    {% endfor %}
-</ul>
+    <ul>
+        {% for appointment in active_appointments %}
+            <li>
+                <strong>Врач:</strong> {{ appointment.doctor.name }} <br>
+                <strong>Дата:</strong> {{ appointment.date }} <br>
+                <a href="{% url 'cancel_appointment' appointment.id %}">Отменить</a>
+            </li>
+        {% endfor %}
+    </ul>
 </body>
 </html>

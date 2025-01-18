@@ -15,6 +15,7 @@ urlpatterns = [
     path('appointments/', views.appointments_list, name='appointments_list'),
     path('appointments/cancel/<int:appointment_id>/', views.cancel_appointment, name='cancel_appointment'),
     path('search/doctors/', views.search_doctors, name='search_doctors'),
+    path('import/services/', views.import_services, name='import_services'),
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

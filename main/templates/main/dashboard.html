@@ -6,7 +6,7 @@
         /* Общие стили */
         body {
             font-family: 'Arial', sans-serif;
-            background-color: #f9f9f9;
+            background-color: #f0f8ff; /* Светло-голубой */
             color: #333;
             margin: 0;
             padding: 0;
@@ -14,7 +14,7 @@
 
         /* Навигационная панель */
         .navbar {
-            background-color: #4CAF50;
+            background-color: #007BFF; /* Основной синий */
             padding: 15px 20px;
             display: flex;
             justify-content: space-between;
@@ -32,7 +32,7 @@
         }
 
         .navbar a:hover {
-            background-color: #45a049;
+            background-color: #0056b3; /* Тёмно-синий для наведения */
         }
 
         /* Основное содержимое */
@@ -46,7 +46,7 @@
         }
 
         h1 {
-            color: #4CAF50;
+            color: #007BFF; /* Основной синий */
             margin-bottom: 20px;
             text-align: center;
         }
@@ -90,11 +90,14 @@
         <a href="{% url 'doctors_list' %}">Список врачей</a>
         <a href="{% url 'create_appointment' %}">Записаться на прием</a>
         <a href="{% url 'appointments_list' %}">Мои записи</a>
+        <a href="{% url 'import_services' %}">Импорт услуг</a> 
         <a href="{% url 'logout' %}">Выйти</a>
     </div>
 
     <!-- Основное содержимое -->
-    <h1>Добро пожаловать, {{ request.user.username }}!</h1>
-    <p>Здесь вы можете управлять своими записями на прием и просматривать доступные услуги.</p>
+    <div class="container">
+        <h1>Добро пожаловать, {{ request.user.username }}!</h1>
+        <p>Здесь вы можете управлять своими записями на прием и просматривать доступные услуги.</p>
+    </div>
 </body>
 </html>

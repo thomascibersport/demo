@@ -7,11 +7,13 @@ from django.contrib.auth import logout
 from django.contrib.admin.views.decorators import staff_member_required
 from django.utils.timezone import now
 from datetime import timedelta
-from django.contrib.admin.views.decorators import staff_member_required
 from .models import Doctor
 from .models import Appointment
 from django.core.paginator import Paginator
 from django.http import JsonResponse
+from django.http import HttpResponseForbidden
+from django.contrib import messages
+from .models import Service
 
 def index(request):
     return render(request, 'main/index.html')
@@ -94,11 +96,13 @@ def appointments_list(request):
     })
 def cancel_appointment(request, appointment_id):
     appointment = Appointment.objects.get(id=appointment_id, user=request.user)
+    # Проверка, можно ли отменить запись
     if appointment.date <= now() + timedelta(days=1):
-        return HttpResponseForbidden("Запись нельзя отменить менее чем за 1 день до приема.")
-    appointment.delete()
-    return redirect('appointments_list')
-from django.contrib.admin.views.decorators import staff_member_required
+        messages.error(request, "Вы не можете отменить запись менее чем за 1 день до приёма.")
+    else:
+        appointment.delete()
+        messages.success(request, "Запись успешно отменена.")
+    return redirect('appointments_list') 
 
 @staff_member_required
 def add_doctor(request):
@@ -132,3 +136,26 @@ def doctors_list(request):
     page_number = request.GET.get('page')  # Номер текущей страницы
     page_obj = paginator.get_page(page_number)  # Получаем объекты для текущей страницы
     return render(request, 'main/doctors_list.html', {'page_obj': page_obj})
+
+def import_services(request):
+    if request.method == 'POST' and request.FILES.get('file'):
+        file = request.FILES['file']
+        try:
+            tree = ET.parse(file)
+            root = tree.getroot()
+
+            for service in root.findall('service'):
+                name = service.find('name').text
+                description = service.find('description').text
+
+                # Создаём или обновляем запись в базе
+                Service.objects.update_or_create(name=name, defaults={'description': description})
+
+            messages.success(request, "Услуги успешно импортированы.")
+        except Exception as e:
+            messages.error(request, f"Ошибка при импорте файла: {e}")
+
+        return redirect('import_services')
+
+    return render(request, 'main/import_services.html')
+

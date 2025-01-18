@@ -3,13 +3,12 @@
 <html>
 <head>
     <title>Список врачей</title>
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 <style>
     /* Общие стили */
     body {
         font-family: 'Arial', sans-serif;
-        background-color: #f9f9f9;
+        background-color: #f0f8ff; /* Светло-голубой фон */
         color: #333;
         margin: 0;
         padding: 0;
@@ -17,7 +16,7 @@
 
     /* Навигационная панель */
     .navbar {
-        background-color: #4CAF50;
+        background-color: #007BFF; /* Основной синий */
         padding: 15px 20px;
         display: flex;
         justify-content: space-between;
@@ -35,13 +34,13 @@
     }
 
     .navbar a:hover {
-        background-color: #45a049;
+        background-color: #0056b3; /* Тёмно-синий для наведения */
     }
 
     /* Заголовок */
     h1 {
         text-align: center;
-        color: #4CAF50;
+        color: #007BFF; /* Основной синий */
         margin-top: 20px;
     }
 
@@ -59,7 +58,7 @@
     }
 
     #search:focus {
-        border-color: #4CAF50;
+        border-color: #007BFF;
         outline: none;
     }
 
@@ -96,7 +95,7 @@
     }
 
     .doctor-card h3 {
-        color: #4CAF50;
+        color: #007BFF; /* Основной синий */
         margin: 10px 0;
     }
 
@@ -114,7 +113,7 @@
     .pagination a {
         margin: 0 5px;
         text-decoration: none;
-        color: #4CAF50;
+        color: #007BFF; /* Основной синий */
         font-weight: bold;
         padding: 8px 12px;
         border-radius: 4px;
@@ -122,7 +121,7 @@
     }
 
     .pagination a:hover {
-        background-color: #e0f7fa;
+        background-color: #e0f7fa; /* Светло-голубой фон для наведения */
     }
 
     .pagination .current {
@@ -158,6 +157,7 @@
         <a href="{% url 'doctors_list' %}">Список врачей</a>
         <a href="{% url 'create_appointment' %}">Записаться на прием</a>
         <a href="{% url 'appointments_list' %}">Мои записи</a>
+        <a href="{% url 'import_services' %}">Импорт услуг</a> 
         <a href="{% url 'logout' %}">Выйти</a>
     </div>
     <h1>Список врачей</h1>
@@ -194,71 +194,67 @@
             {% endif %}
         </span>
     </div>
-    
+     <script>
+document.addEventListener('DOMContentLoaded', function () {
+    const searchInput = document.getElementById('search');
+    const doctorCardsContainer = document.getElementById('doctor-cards');
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const searchInput = document.getElementById('search');
-            const doctorCardsContainer = document.getElementById('doctor-cards');
-    
-            searchInput.addEventListener('input', function () {
-                const query = searchInput.value.trim();
-    
-                // Если поле пустое, отображаем изначальные карточки
-                if (query.length === 0) {
-                    window.location.reload();
-                    return;
-                }
-    
-                // Выполняем поиск при вводе текста
-                fetch(`/search/doctors/?q=${query}`, {
-                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    // Очищаем текущие карточки
-                    doctorCardsContainer.innerHTML = '';
-    
-                    if (data.length > 0) {
-                        // Создаем новые карточки
-                        data.forEach(doctor => {
-                            const card = document.createElement('div');
-                            card.classList.add('doctor-card');
-                            card.setAttribute('data-id', doctor.id);
-    
-                            if (doctor.avatar) {
-                                const img = document.createElement('img');
-                                img.src = doctor.avatar;
-                                img.alt = doctor.name;
-                                card.appendChild(img);
-                            }
-    
-                            const name = document.createElement('h3');
-                            name.textContent = doctor.name;
-                            card.appendChild(name);
-    
-                            const specialty = document.createElement('p');
-                            specialty.textContent = doctor.specialty;
-                            card.appendChild(specialty);
-    
-                            const workingHours = document.createElement('p');
-                            workingHours.textContent = doctor.working_hours;
-                            card.appendChild(workingHours);
-    
-                            doctorCardsContainer.appendChild(card);
-                        });
-                    } else {
-                        // Если ничего не найдено, выводим сообщение
-                        const message = document.createElement('p');
-                        message.textContent = 'Врачи не найдены.';
-                        doctorCardsContainer.appendChild(message);
+    searchInput.addEventListener('input', function () {
+        const query = searchInput.value.trim();
+
+        // Если поле пустое, отображаем изначальные карточки
+        if (query.length === 0) {
+            window.location.reload();
+            return;
+        }
+
+        // Выполняем поиск при вводе текста
+        fetch(`/search/doctors/?q=${encodeURIComponent(query)}`, {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Очищаем текущие карточки
+            doctorCardsContainer.innerHTML = '';
+
+            if (data.length > 0) {
+                // Создаем новые карточки
+                data.forEach(doctor => {
+                    const card = document.createElement('div');
+                    card.classList.add('doctor-card');
+                    card.setAttribute('data-id', doctor.id);
+
+                    if (doctor.avatar) {
+                        const img = document.createElement('img');
+                        img.src = doctor.avatar;
+                        img.alt = doctor.name;
+                        card.appendChild(img);
                     }
-                })
-                .catch(error => console.error('Ошибка загрузки данных:', error));
-            });
-        });
+
+                    const name = document.createElement('h3');
+                    name.textContent = doctor.name;
+                    card.appendChild(name);
+
+                    const specialty = document.createElement('p');
+                    specialty.textContent = doctor.specialty;
+                    card.appendChild(specialty);
+
+                    const workingHours = document.createElement('p');
+                    workingHours.textContent = doctor.working_hours;
+                    card.appendChild(workingHours);
+
+                    doctorCardsContainer.appendChild(card);
+                });
+            } else {
+                // Если ничего не найдено, выводим сообщение
+                const message = document.createElement('p');
+                message.textContent = 'Врачи не найдены.';
+                doctorCardsContainer.appendChild(message);
+            }
+        })
+        .catch(error => console.error('Ошибка загрузки данных:', error));
+    });
+});
     </script>
-    
-    
 </body>
 </html>

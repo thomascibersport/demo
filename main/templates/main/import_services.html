@@ -1,0 +1,156 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Импорт услуг</title>
+</head>
+<style>
+    /* Общие стили */
+    body {
+        font-family: 'Arial', sans-serif;
+        background-color: #f0f8ff; /* Светло-голубой фон */
+        color: #333;
+        margin: 0;
+        padding: 0;
+    }
+
+    /* Навигационная панель */
+    .navbar {
+        background-color: #007BFF; /* Основной синий */
+        padding: 15px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .navbar a {
+        text-decoration: none;
+        color: white;
+        font-weight: bold;
+        padding: 8px 12px;
+        border-radius: 4px;
+        transition: background-color 0.3s ease;
+    }
+
+    .navbar a:hover {
+        background-color: #0056b3; /* Тёмно-синий для наведения */
+    }
+
+    /* Заголовок */
+    h1 {
+        text-align: center;
+        color: #007BFF; /* Основной синий */
+        margin-top: 20px;
+    }
+
+    /* Форма */
+    .form-container {
+        max-width: 400px;
+        margin: 20px auto;
+        padding: 20px;
+        background-color: white;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+    }
+
+    label {
+        font-weight: bold;
+        margin-bottom: 10px;
+        display: block;
+        color: #333;
+    }
+
+    input[type="file"] {
+        margin-bottom: 15px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        padding: 8px;
+        font-size: 14px;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    button {
+        background-color: #007BFF; /* Основной синий */
+        color: white;
+        border: none;
+        padding: 10px 15px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+        width: 100%;
+        transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+        background-color: #0056b3; /* Тёмно-синий для наведения */
+    }
+
+    /* Сообщения */
+    .message {
+        padding: 10px;
+        margin-bottom: 15px;
+        border-radius: 5px;
+        font-weight: bold;
+    }
+
+    .message.success {
+        background-color: #007BFF; /* Синий для успешных сообщений */
+        color: white;
+    }
+
+    .message.error {
+        background-color: #ff4d4d; /* Красный для ошибок */
+        color: white;
+    }
+
+    /* Адаптивность */
+    @media (max-width: 768px) {
+        .navbar {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .navbar a {
+            margin: 5px 0;
+        }
+
+        .form-container {
+            padding: 15px;
+        }
+
+        h1 {
+            font-size: 24px;
+        }
+    }
+</style>
+<body>
+    <!-- Шапка -->
+    <div class="navbar">
+        <a href="{% url 'dashboard' %}">Личный кабинет</a>
+        <a href="{% url 'doctors_list' %}">Список врачей</a>
+        <a href="{% url 'create_appointment' %}">Записаться на прием</a>
+        <a href="{% url 'appointments_list' %}">Мои записи</a>
+        <a href="{% url 'import_services' %}">Импорт услуг</a> 
+        <a href="{% url 'logout' %}">Выйти</a>
+    </div>
+
+    <!-- Основное содержимое -->
+    <h1>Импорт данных об услугах</h1>
+    <div class="form-container">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="message {{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <label for="file">Выберите XML-файл:</label>
+            <input type="file" name="file" id="file" accept=".xml" required>
+            <button type="submit">Загрузить</button>
+        </form>
+    </div>
+</body>
+</html>
