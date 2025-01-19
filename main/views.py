@@ -14,7 +14,10 @@ from django.http import JsonResponse
 from django.http import HttpResponseForbidden
 from django.contrib import messages
 from .models import Service
+from .models import UserAvatar
+from django.contrib.auth import get_user_model
 
+User = get_user_model()
 def index(request):
     return render(request, 'main/index.html')
 
@@ -22,13 +25,21 @@ def register(request):
     if request.method == 'POST':
         form = RegistrationForm(request.POST, request.FILES)
         if form.is_valid():
-            user = form.save()
+            # Создаём пользователя
+            user = form.save(commit=False)
+            user.set_password(form.cleaned_data['password'])
+            user.save()
+
+            # Сохраняем аватар
+            avatar = form.cleaned_data.get('avatar')
+            if avatar:
+                UserAvatar.objects.create(user=user, avatar=avatar)
+
             login(request, user)
             return redirect('dashboard')
     else:
         form = RegistrationForm()
     return render(request, 'main/register.html', {'form': form})
-
 def user_login(request):
     if request.method == 'POST':
         username = request.POST['username']
@@ -66,10 +77,6 @@ def add_doctor(request):
         Doctor.objects.create(name=name, specialty=specialty, working_hours=working_hours, avatar=avatar)
         return redirect('admin_dashboard')
     return render(request, 'main/add_doctor.html')
-
-
-
-
 
 def create_appointment(request):
     if request.method == 'POST':

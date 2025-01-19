@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html>
 <head>
@@ -98,6 +99,13 @@
     <div class="container">
         <h1>Добро пожаловать, {{ request.user.username }}!</h1>
         <p>Здесь вы можете управлять своими записями на прием и просматривать доступные услуги.</p>
+        {% if user.is_authenticated %}
+        {% if user.avatar and user.avatar.avatar %}
+            <img src="{{ user.avatar.avatar.url }}" alt="Аватар пользователя" style="width: 50px; height: 50px; border-radius: 50%;">
+        {% else %}
+            <img src="{% static 'images/default_avatar.png' %}" alt="Аватар пользователя" style="width: 50px; height: 50px; border-radius: 50%;">
+        {% endif %}
+    {% endif %}
     </div>
 </body>
 </html>
