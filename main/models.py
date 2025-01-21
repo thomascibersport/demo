@@ -4,6 +4,9 @@ from django.contrib.auth.models import User
 from django.core.validators import FileExtensionValidator
 from django.core.exceptions import ValidationError
 from django.conf import settings
+from django.utils.timezone import now
+from django.utils.timezone import make_aware
+
 
 class CustomUser(AbstractUser):
     pass  # Используем только стандартные поля
@@ -18,10 +21,26 @@ class Doctor(models.Model):
 
 
 class Appointment(models.Model):
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    STATUS_CHOICES = [
+        ('active', 'Active'),
+        ('past', 'Past'),
+    ]
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE)
     date = models.DateTimeField()
-    status = models.CharField(max_length=50, choices=[('active', 'Active'), ('past', 'Past')])
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='active')
+
+    def save(self, *args, **kwargs):
+        # Приводим дату к offset-aware
+        if not self.date.tzinfo:
+            self.date = make_aware(self.date)
+
+        # Обновляем статус
+        if self.date < now():
+            self.status = 'past'
+        else:
+            self.status = 'active'
+        super().save(*args, **kwargs)
 
 
 class Service(models.Model):

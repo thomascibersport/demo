@@ -16,7 +16,6 @@
         /* Навигационная панель */
         .navbar {
             background-color: #007BFF; /* Ярко-синий */
-            padding: 15px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -117,6 +116,12 @@
 
 <body>
     <div class="navbar">
+        <!-- Логотип -->
+        <div class="logo">
+            <img src="{% static 'logo.svg' %}" alt="Logo" width="100" height="100" />
+        </div>
+    
+    
         <a href="{% url 'dashboard' %}">Личный кабинет</a>
         <a href="{% url 'doctors_list' %}">Список врачей</a>
         <a href="{% url 'create_appointment' %}">Записаться на прием</a>
@@ -134,7 +139,7 @@
             {% endfor %}
         </select>
         <label for="date">Выберите дату и время:</label>
-        <input type="datetime-local" name="date" id="date">
+        <input type="datetime-local" name="date" id="date" required>
         <button type="submit">Записаться</button>
     </form>
 </body>

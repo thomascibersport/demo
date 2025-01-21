@@ -16,6 +16,7 @@ from django.contrib import messages
 from .models import Service
 from .models import UserAvatar
 from django.contrib.auth import get_user_model
+from datetime import datetime
 
 User = get_user_model()
 def index(request):
@@ -25,12 +26,18 @@ def register(request):
     if request.method == 'POST':
         form = RegistrationForm(request.POST, request.FILES)
         if form.is_valid():
-            # Создаём пользователя
             user = form.save(commit=False)
             user.set_password(form.cleaned_data['password'])
+
+            # Сохраняем ФИО
+            full_name = form.cleaned_data['full_name']
+            first_name, last_name = full_name.split(' ', 1) if ' ' in full_name else (full_name, '')
+            user.first_name = first_name
+            user.last_name = last_name
+
             user.save()
 
-            # Сохраняем аватар
+            # Сохранение аватара
             avatar = form.cleaned_data.get('avatar')
             if avatar:
                 UserAvatar.objects.create(user=user, avatar=avatar)
@@ -40,6 +47,7 @@ def register(request):
     else:
         form = RegistrationForm()
     return render(request, 'main/register.html', {'form': form})
+
 def user_login(request):
     if request.method == 'POST':
         username = request.POST['username']
@@ -49,7 +57,7 @@ def user_login(request):
             login(request, user)
             if user.is_staff:
                 return redirect('/admin')  # Панель администратора
-            return redirect('/dashboard')  # Личный кабинет
+            return redirect('appointments_list')  # Перенаправляем на Мои услуги (appointments_list)
         else:
             return render(request, 'main/login.html', {'error': 'Неверный логин или пароль'})
     return render(request, 'main/login.html')
@@ -81,13 +89,22 @@ def add_doctor(request):
 def create_appointment(request):
     if request.method == 'POST':
         doctor_id = request.POST['doctor']
-        date = request.POST['date']
+        date_str = request.POST['date']
+        
+        # Преобразуем строку даты в объект datetime
+        try:
+            date = datetime.fromisoformat(date_str)
+        except ValueError:
+            messages.error(request, "Неверный формат даты.")
+            return redirect('create_appointment')
+
         Appointment.objects.create(
             user=request.user,
             doctor_id=doctor_id,
             date=date,
             status='active'
         )
+        messages.success(request, "Вы успешно записались на приём.")
         return redirect('appointments_list')
 
     doctors = Doctor.objects.all()

@@ -17,7 +17,6 @@
     /* Навигационная панель */
     .navbar {
         background-color: #007BFF; /* Синий основной */
-        padding: 15px 20px;
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -131,6 +130,12 @@
 </style>
 <body>
     <div class="navbar">
+        <!-- Логотип -->
+        <div class="logo">
+            <img src="{% static 'logo.svg' %}" alt="Logo" width="100" height="100" />
+        </div>
+    
+    
         <a href="{% url 'dashboard' %}">Личный кабинет</a>
         <a href="{% url 'doctors_list' %}">Список врачей</a>
         <a href="{% url 'create_appointment' %}">Записаться на прием</a>
