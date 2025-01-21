@@ -17,7 +17,7 @@ from .models import Service
 from .models import UserAvatar
 from django.contrib.auth import get_user_model
 from datetime import datetime
-
+import xml.etree.ElementTree as ET
 User = get_user_model()
 def index(request):
     return render(request, 'main/index.html')
